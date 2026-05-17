@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Crypto Position Size Calculator with Leverage — Free Tool 2026</title>
+<meta name="description" content="Free crypto position size calculator. Enter your balance, risk %, stop-loss and leverage to get the exact position size and margin required for any trade on Binance."/>
+<link rel="canonical" href="https://nassr-nasr.github.io/crypto-tools/position-calculator.html"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080C14;--card:#0F1520;--border:#1A2540;--accent:#00D4FF;--accent2:#7B2FFF;--text:#E2E8F0;--muted:#6B7A99;--green:#22c55e;--red:#ef4444}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+nav{display:flex;align-items:center;gap:1rem;padding:1rem 2rem;border-bottom:1px solid var(--border)}
+nav a{color:var(--muted);text-decoration:none;font-size:0.9rem}nav a:hover{color:var(--text)}
+nav .logo{font-weight:800;color:var(--text);margin-right:auto;font-size:1rem}
+.hero{padding:3rem 2rem 2rem;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(0,212,255,0.06) 0%,transparent 60%)}
+h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;margin-bottom:.75rem;line-height:1.15}
+.grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto 2rem;line-height:1.7}
+.main{max-width:780px;margin:0 auto;padding:1.5rem 2rem}
+
+/* CALCULATOR */
+.calc{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:2rem}
+.calc h2{font-size:1.2rem;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+@media(max-width:520px){.grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:.4rem}
+label{font-size:0.85rem;color:var(--muted);font-weight:600}
+.input-wrap{position:relative}
+.input-wrap input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text);padding:.75rem 3rem .75rem 1rem;border-radius:10px;font-size:1rem;font-family:inherit;outline:none;transition:border-color .2s}
+.input-wrap input:focus{border-color:var(--accent)}
+.unit{position:absolute;right:.8rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;font-weight:600;pointer-events:none}
+.mode-toggle{display:flex;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.5rem}
+.mode-btn{flex:1;padding:.65rem;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;font-weight:600;transition:all .2s}
+.mode-btn.active{background:rgba(0,212,255,0.12);color:var(--accent)}
+.calc-btn{margin-top:1.5rem;width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:700;font-size:1rem;padding:1rem;border-radius:12px;border:none;cursor:pointer;transition:transform .2s,opacity .2s}
+.calc-btn:hover{transform:translateY(-1px);opacity:.9}
+
+/* RESULTS */
+.results{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:1.5rem}
+.result-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center}
+.result-label{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem}
+.result-value{font-size:1.5rem;font-weight:900}
+.result-value.green{color:var(--green)}
+.result-value.red{color:var(--red)}
+.result-value.accent{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* EXPLANATION */
+.explain{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:2rem}
+.explain h2{font-size:1.2rem;font-weight:700;margin-bottom:1rem}
+.explain p,.explain li{color:var(--muted);font-size:.95rem;line-height:1.8}
+.explain ul{padding-left:1.5rem;margin:.75rem 0}
+.explain code{background:rgba(0,212,255,.08);color:var(--accent);padding:.1rem .4rem;border-radius:4px;font-size:.85rem}
+
+/* CTA */
+.cta-inline{background:linear-gradient(135deg,rgba(0,212,255,0.07),rgba(123,47,255,0.07));border:1px solid rgba(0,212,255,.15);border-radius:20px;padding:2rem;text-align:center;margin-bottom:2rem}
+.cta-inline h3{font-weight:800;font-size:1.25rem;margin-bottom:.5rem}
+.cta-inline p{color:var(--muted);margin-bottom:1.25rem;font-size:.95rem}
+.btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:700;padding:.8rem 1.8rem;border-radius:12px;text-decoration:none;font-size:.95rem;box-shadow:0 0 25px rgba(0,212,255,.2);transition:transform .2s}
+.btn:hover{transform:translateY(-2px)}
+footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<nav>
+  <span class="logo">📐 CryptoTools</span>
+  <a href="index.html">All Tools</a>
+  <a href="fee-calculator.html">Fee Calc</a>
+  <a href="pnl-calculator.html">P&L Calc</a>
+</nav>
+
+<section class="hero">
+  <h1>Crypto <span class="grad">Position Size</span> Calculator</h1>
+  <p class="sub">Calculate your exact position size based on risk management rules. Works with leverage for Binance Futures, Bybit, and all major exchanges.</p>
+</section>
+
+<div class="main">
+  <div class="calc">
+    <h2>📐 Position Size Calculator</h2>
+
+    <!-- Long / Short toggle -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn-long" onclick="setMode('long')">LONG ▲</button>
+      <button class="mode-btn" id="btn-short" onclick="setMode('short')">SHORT ▼</button>
+    </div>
+
+    <div class="grid">
+      <div class="field">
+        <label for="balance">Account Balance</label>
+        <div class="input-wrap">
+          <input type="number" id="balance" value="1000" min="1" placeholder="1000"/>
+          <span class="unit">USDT</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="risk">Risk per Trade</label>
+        <div class="input-wrap">
+          <input type="number" id="risk" value="1" min="0.1" max="100" step="0.1" placeholder="1"/>
+          <span class="unit">%</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="entry">Entry Price</label>
+        <div class="input-wrap">
+          <input type="number" id="entry" value="67000" min="0.000001" placeholder="67000"/>
+          <span class="unit">$</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="stoploss">Stop-Loss Price</label>
+        <div class="input-wrap">
+          <input type="number" id="stoploss" value="65000" min="0.000001" placeholder="65000"/>
+          <span class="unit">$</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="leverage">Leverage</label>
+        <div class="input-wrap">
+          <input type="number" id="leverage" value="5" min="1" max="125" placeholder="5"/>
+          <span class="unit">x</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="takeprofit">Take-Profit (optional)</label>
+        <div class="input-wrap">
+          <input type="number" id="takeprofit" value="71000" min="0" placeholder="71000"/>
+          <span class="unit">$</span>
+        </div>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()" id="calc-btn">Calculate Position Size →</button>
+
+    <div class="results" id="results" style="display:none">
+      <div class="result-card">
+        <div class="result-label">Position Size</div>
+        <div class="result-value accent" id="r-size">—</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:.3rem" id="r-size-coin">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Risk Amount</div>
+        <div class="result-value red" id="r-risk">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Margin Required</div>
+        <div class="result-value" id="r-margin">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Stop Loss %</div>
+        <div class="result-value red" id="r-sl-pct">—</div>
+      </div>
+      <div class="result-card" id="r-rr-card" style="display:none">
+        <div class="result-label">Risk / Reward</div>
+        <div class="result-value green" id="r-rr">—</div>
+      </div>
+      <div class="result-card" id="r-profit-card" style="display:none">
+        <div class="result-label">Max Profit</div>
+        <div class="result-value green" id="r-profit">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="explain">
+    <h2>How Position Sizing Works</h2>
+    <p>The fundamental formula is:</p>
+    <ul>
+      <li><code>Risk Amount = Account Balance × Risk %</code></li>
+      <li><code>Stop Distance = |Entry - Stop Loss|</code></li>
+      <li><code>Position Size = Risk Amount ÷ Stop Distance</code></li>
+      <li><code>Margin = Position Size × Entry Price ÷ Leverage</code></li>
+    </ul>
+    <p>Example: $1,000 account, 1% risk, entry $67,000, stop $65,000 → Risk = $10, Stop Distance = $2,000, Position = 0.005 BTC. With 5x leverage, you only need $67 margin.</p>
+    <p style="margin-top:.75rem"><strong>Why it matters:</strong> Leverage doesn't change your position size — it only reduces the margin needed. Never size based on leverage, always size based on your stop-loss.</p>
+  </div>
+
+  <div class="cta-inline">
+    <h3>Ready to execute your calculated trade?</h3>
+    <p>Trade on Binance — the deepest liquidity, lowest fees, and up to 125x leverage on 300+ pairs. New users get a welcome bonus.</p>
+    <a href="https://www.binance.com/activity/referral-entry/CPA?ref=897067319&utm_source=position_calc" class="btn" id="cta-trade">
+      🚀 Trade on Binance — Get Bonus
+    </a>
+  </div>
+
+  <div class="explain">
+    <h2>Frequently Asked Questions</h2>
+    <p><strong>What's the ideal risk per trade?</strong></p>
+    <p>Professional traders typically risk 1–2% per trade. This ensures you can survive 20–50 consecutive losses without blowing your account.</p>
+    <p style="margin-top:1rem"><strong>Does leverage affect my position size?</strong></p>
+    <p>No. Leverage only affects the margin (collateral) required. Your position size is determined by your risk and stop-loss distance, not your leverage.</p>
+    <p style="margin-top:1rem"><strong>What's a good risk/reward ratio?</strong></p>
+    <p>A minimum of 1:2 (risk $1 to make $2). Most professionals aim for 1:3 or higher. Below 1:1.5, the math doesn't work long-term even with a high win rate.</p>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 CryptoTools — For educational purposes only. Trading involves significant risk of loss.</p>
+  <p style="margin-top:.5rem"><a href="index.html" style="color:var(--muted)">← All Calculators</a></p>
+</footer>
+
+<script>
+let mode = 'long';
+function setMode(m) {
+  mode = m;
+  document.getElementById('btn-long').className = 'mode-btn' + (m==='long' ? ' active' : '');
+  document.getElementById('btn-short').className = 'mode-btn' + (m==='short' ? ' active' : '');
+  // Update stop loss placeholder hint
+  document.getElementById('stoploss').placeholder = m === 'long' ? 'Below entry' : 'Above entry';
+}
+
+function fmt(n, decimals=2) {
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(2) + 'M';
+  if (n >= 1000) return '$' + n.toLocaleString('en-US', {minimumFractionDigits:decimals, maximumFractionDigits:decimals});
+  return '$' + n.toFixed(decimals);
+}
+
+function calculate() {
+  const balance  = parseFloat(document.getElementById('balance').value)   || 0;
+  const riskPct  = parseFloat(document.getElementById('risk').value)       || 0;
+  const entry    = parseFloat(document.getElementById('entry').value)      || 0;
+  const sl       = parseFloat(document.getElementById('stoploss').value)   || 0;
+  const lev      = parseFloat(document.getElementById('leverage').value)   || 1;
+  const tp       = parseFloat(document.getElementById('takeprofit').value) || 0;
+
+  if (!balance || !riskPct || !entry || !sl || !lev) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  const stopDist = Math.abs(entry - sl);
+  if (stopDist === 0) { alert('Entry and stop-loss cannot be the same price.'); return; }
+
+  const riskAmt    = balance * (riskPct / 100);
+  const posSize    = riskAmt / stopDist;          // in coin units
+  const posValue   = posSize * entry;              // in USDT
+  const margin     = posValue / lev;
+  const slPct      = (stopDist / entry) * 100;
+
+  document.getElementById('r-size').textContent  = fmt(posValue);
+  document.getElementById('r-size-coin').textContent = posSize.toFixed(6) + ' coins';
+  document.getElementById('r-risk').textContent   = fmt(riskAmt);
+  document.getElementById('r-margin').textContent = fmt(margin);
+  document.getElementById('r-sl-pct').textContent = '-' + slPct.toFixed(2) + '%';
+
+  // Risk/Reward if TP provided
+  if (tp && tp !== entry) {
+    const tpDist  = Math.abs(tp - entry);
+    const profit  = posSize * tpDist;
+    const rr      = (tpDist / stopDist).toFixed(2);
+    document.getElementById('r-rr').textContent     = '1 : ' + rr;
+    document.getElementById('r-profit').textContent = '+' + fmt(profit);
+    document.getElementById('r-rr-card').style.display    = '';
+    document.getElementById('r-profit-card').style.display = '';
+  } else {
+    document.getElementById('r-rr-card').style.display    = 'none';
+    document.getElementById('r-profit-card').style.display = 'none';
+  }
+
+  document.getElementById('results').style.display = 'grid';
+}
+
+// Compute on Enter key in any input
+document.querySelectorAll('input').forEach(i => i.addEventListener('keydown', e => { if(e.key==='Enter') calculate(); }));
+// Auto-compute on load
+calculate();
+</script>
+</body>
+</html>
