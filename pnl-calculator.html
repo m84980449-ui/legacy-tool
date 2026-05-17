@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Crypto Profit & Loss Calculator — Long/Short with Leverage | Free 2026</title>
+<meta name="description" content="Free crypto P&L calculator for long and short trades. Calculate profit, loss, ROI, and risk/reward ratio with leverage. Works with Binance Futures."/>
+<link rel="canonical" href="https://m84980449-ui.github.io/crypto-tools/pnl-calculator.html"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080C14;--card:#0F1520;--border:#1A2540;--accent:#00D4FF;--accent2:#7B2FFF;--text:#E2E8F0;--muted:#6B7A99;--green:#22c55e;--red:#ef4444}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+nav{display:flex;align-items:center;gap:1rem;padding:1rem 2rem;border-bottom:1px solid var(--border)}
+nav a{color:var(--muted);text-decoration:none;font-size:.9rem}nav a:hover{color:var(--text)}
+nav .logo{font-weight:800;color:var(--text);margin-right:auto}
+.hero{padding:3rem 2rem 2rem;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(123,47,255,.07) 0%,transparent 60%)}
+h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;margin-bottom:.75rem;line-height:1.15}
+.grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto 2rem;line-height:1.7}
+.main{max-width:780px;margin:0 auto;padding:1.5rem 2rem}
+.calc{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:2rem}
+.calc h2{font-size:1.2rem;font-weight:700;margin-bottom:1.5rem}
+.mode-toggle{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.5rem}
+.mode-btn{flex:1;padding:.65rem;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;font-weight:700;transition:all .2s}
+.mode-btn.long.active{background:rgba(34,197,94,.12);color:var(--green)}
+.mode-btn.short.active{background:rgba(239,68,68,.12);color:var(--red)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+@media(max-width:520px){.grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:.4rem}
+label{font-size:.85rem;color:var(--muted);font-weight:600}
+.input-wrap{position:relative}
+.input-wrap input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);padding:.75rem 3.2rem .75rem 1rem;border-radius:10px;font-size:1rem;font-family:inherit;outline:none;transition:border-color .2s}
+.input-wrap input:focus{border-color:var(--accent)}
+.unit{position:absolute;right:.8rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;font-weight:600;pointer-events:none}
+.calc-btn{margin-top:1.5rem;width:100%;font-weight:700;font-size:1rem;padding:1rem;border-radius:12px;border:none;cursor:pointer;transition:transform .2s,opacity .2s;color:#fff}
+.calc-btn.long-btn{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.calc-btn.short-btn{background:linear-gradient(135deg,#ef4444,#dc2626)}
+.calc-btn:hover{transform:translateY(-1px);opacity:.9}
+
+/* Big result banner */
+.result-banner{margin-top:1.75rem;border-radius:16px;padding:1.5rem 2rem;text-align:center;display:none}
+.result-banner.profit{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25)}
+.result-banner.loss{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25)}
+.result-banner .label{font-size:.8rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem}
+.result-banner .amount{font-size:2.8rem;font-weight:900;line-height:1}
+.result-banner .amount.profit-text{color:var(--green)}
+.result-banner .amount.loss-text{color:var(--red)}
+.result-banner .sub-metrics{display:flex;justify-content:center;gap:2rem;margin-top:1rem;flex-wrap:wrap}
+.result-banner .metric{text-align:center}
+.result-banner .metric .val{font-size:1.2rem;font-weight:800}
+.result-banner .metric .lbl{font-size:.72rem;color:var(--muted);margin-top:.15rem}
+
+.results-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-top:1.25rem;display:none}
+.result-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:1.1rem;text-align:center}
+.result-card .lbl{font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem}
+.result-card .val{font-size:1.15rem;font-weight:800}
+.val.green{color:var(--green)}.val.red{color:var(--red)}.val.accent{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* Liquidation warning */
+.liq-warning{display:none;margin-top:1rem;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:1rem 1.25rem;font-size:.875rem;color:var(--red)}
+
+.explain{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:2rem}
+.explain h2{font-size:1.2rem;font-weight:700;margin-bottom:1rem}
+.explain p,.explain li{color:var(--muted);font-size:.9rem;line-height:1.8}
+.explain ul{padding-left:1.5rem;margin:.75rem 0}
+.cta-inline{background:linear-gradient(135deg,rgba(0,212,255,.07),rgba(123,47,255,.07));border:1px solid rgba(0,212,255,.15);border-radius:20px;padding:2rem;text-align:center;margin-bottom:2rem}
+.cta-inline h3{font-weight:800;font-size:1.25rem;margin-bottom:.5rem}
+.cta-inline p{color:var(--muted);margin-bottom:1.25rem;font-size:.9rem}
+.btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:700;padding:.8rem 1.8rem;border-radius:12px;text-decoration:none;font-size:.95rem;box-shadow:0 0 25px rgba(0,212,255,.2);transition:transform .2s}
+.btn:hover{transform:translateY(-2px)}
+footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<nav>
+  <span class="logo">📊 CryptoTools</span>
+  <a href="index.html">All Tools</a>
+  <a href="position-calculator.html">Position Calc</a>
+  <a href="fee-calculator.html">Fee Calc</a>
+</nav>
+
+<section class="hero">
+  <h1>Crypto <span class="grad">P&amp;L Calculator</span></h1>
+  <p class="sub">Calculate your exact profit or loss on any long or short trade. Includes leverage, fees, ROI, and liquidation price.</p>
+</section>
+
+<div class="main">
+  <div class="calc">
+    <h2>📊 Profit & Loss Calculator</h2>
+    <div class="mode-toggle">
+      <button class="mode-btn long active" id="btn-long" onclick="setMode('long')">▲ LONG</button>
+      <button class="mode-btn short" id="btn-short" onclick="setMode('short')">▼ SHORT</button>
+    </div>
+
+    <div class="grid">
+      <div class="field">
+        <label for="investment">Investment (Margin)</label>
+        <div class="input-wrap">
+          <input type="number" id="investment" value="200" placeholder="200"/>
+          <span class="unit">USDT</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="lev">Leverage</label>
+        <div class="input-wrap">
+          <input type="number" id="lev" value="5" min="1" max="125" placeholder="5"/>
+          <span class="unit">×</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="entry-price">Entry Price</label>
+        <div class="input-wrap">
+          <input type="number" id="entry-price" value="67000" placeholder="67000"/>
+          <span class="unit">$</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="exit-price">Exit Price</label>
+        <div class="input-wrap">
+          <input type="number" id="exit-price" value="71000" placeholder="71000"/>
+          <span class="unit">$</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="fee-rate">Fee Rate (per side)</label>
+        <div class="input-wrap">
+          <input type="number" id="fee-rate" value="0.075" step="0.001" placeholder="0.075"/>
+          <span class="unit">%</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="sl-price">Stop Loss (optional)</label>
+        <div class="input-wrap">
+          <input type="number" id="sl-price" value="65000" placeholder="optional"/>
+          <span class="unit">$</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="calc-btn long-btn" id="calc-btn" onclick="calculate()">
+      Calculate P&L →
+    </button>
+
+    <!-- Big result -->
+    <div class="result-banner" id="result-banner">
+      <div class="label" id="r-banner-label">NET PROFIT</div>
+      <div class="amount" id="r-banner-amount">—</div>
+      <div class="sub-metrics">
+        <div class="metric"><div class="val" id="r-roi">—</div><div class="lbl">ROI</div></div>
+        <div class="metric"><div class="val" id="r-pos-val">—</div><div class="lbl">Position Value</div></div>
+        <div class="metric"><div class="val" id="r-total-fees">—</div><div class="lbl">Total Fees</div></div>
+      </div>
+    </div>
+
+    <!-- Secondary metrics -->
+    <div class="results-grid" id="results-grid">
+      <div class="result-card"><div class="lbl">Gross P&L</div><div class="val" id="r-gross">—</div></div>
+      <div class="result-card"><div class="lbl">Entry Fee</div><div class="val red" id="r-fee-in">—</div></div>
+      <div class="result-card"><div class="lbl">Exit Fee</div><div class="val red" id="r-fee-out">—</div></div>
+      <div class="result-card"><div class="lbl">Break-Even</div><div class="val accent" id="r-breakeven">—</div></div>
+      <div class="result-card"><div class="lbl">Liq. Price</div><div class="val red" id="r-liq">—</div></div>
+      <div class="result-card"><div class="lbl">Risk/Reward</div><div class="val green" id="r-rr">—</div></div>
+    </div>
+
+    <div class="liq-warning" id="liq-warning">
+      ⚠️ <strong>Liquidation Risk:</strong> Your exit price is <span id="liq-dist">—</span> from your liquidation price. 
+      With this leverage, a move of <span id="liq-move">—</span> against you wipes out your full margin.
+    </div>
+  </div>
+
+  <div class="cta-inline">
+    <h3>Execute with the <span class="grad">lowest fees</span></h3>
+    <p>Binance Futures: 0.02% maker / 0.05% taker. 300+ pairs, up to 125x leverage. New users get a welcome bonus.</p>
+    <a href="https://www.binance.com/activity/referral-entry/CPA?ref=897067319&utm_source=pnl_calc" class="btn" id="cta-pnl">
+      🚀 Trade Futures on Binance
+    </a>
+  </div>
+
+  <div class="explain">
+    <h2>Understanding Your P&L</h2>
+    <ul>
+      <li><strong>Position Value</strong>: Your margin × leverage. This is the actual size of your trade in the market.</li>
+      <li><strong>Gross P&L</strong>: Raw profit/loss before fees — (Exit − Entry) × Position Size for longs.</li>
+      <li><strong>Net P&L</strong>: Gross P&L minus fees paid on entry and exit.</li>
+      <li><strong>ROI</strong>: Net P&L ÷ Margin × 100. This is your actual return on the capital you put in.</li>
+      <li><strong>Liquidation Price</strong>: Estimated price where your margin is fully consumed. Always leave buffer.</li>
+      <li><strong>Break-Even</strong>: The price you need to exit at to cover fees exactly (neither profit nor loss).</li>
+    </ul>
+    <p style="margin-top:.75rem"><strong>Key insight:</strong> With 10× leverage, a 10% move in your favor gives you ~100% ROI. But a 10% move against you = liquidation. Always set a stop-loss before entering a leveraged trade.</p>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 CryptoTools — Educational tool. Not financial advice. Always manage risk.</p>
+  <p style="margin-top:.5rem"><a href="index.html" style="color:var(--muted)">← All Calculators</a></p>
+</footer>
+
+<script>
+let mode = 'long';
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('btn-long').className  = 'mode-btn long'  + (m==='long'  ? ' active' : '');
+  document.getElementById('btn-short').className = 'mode-btn short' + (m==='short' ? ' active' : '');
+  const btn = document.getElementById('calc-btn');
+  btn.className  = m === 'long' ? 'calc-btn long-btn' : 'calc-btn short-btn';
+  btn.textContent = (m === 'long' ? '▲ Calculate Long P&L →' : '▼ Calculate Short P&L →');
+  calculate();
+}
+
+function fmt(n, prefix='$') {
+  const abs = Math.abs(n);
+  const str = abs >= 1000
+    ? prefix + abs.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+    : prefix + abs.toFixed(4);
+  return (n < 0 ? '-' : '') + str;
+}
+
+function calculate() {
+  const margin   = parseFloat(document.getElementById('investment').value)  || 0;
+  const leverage = parseFloat(document.getElementById('lev').value)         || 1;
+  const entry    = parseFloat(document.getElementById('entry-price').value) || 0;
+  const exit     = parseFloat(document.getElementById('exit-price').value)  || 0;
+  const feeRate  = parseFloat(document.getElementById('fee-rate').value) / 100 || 0;
+  const sl       = parseFloat(document.getElementById('sl-price').value)    || 0;
+
+  if (!margin || !entry || !exit) return;
+
+  const positionValue = margin * leverage;
+  const coinQty       = positionValue / entry;
+
+  // P&L direction based on mode
+  const priceDiff = mode === 'long' ? (exit - entry) : (entry - exit);
+  const grossPnl  = coinQty * priceDiff;
+
+  // Fees (both sides)
+  const feeIn  = positionValue * feeRate;
+  const feeOut = (positionValue + grossPnl) * feeRate;
+  const totalFees = feeIn + feeOut;
+  const netPnl    = grossPnl - totalFees;
+  const roi       = (netPnl / margin) * 100;
+
+  // Break-even price (including fees)
+  const feesPerCoin = (feeIn + feeOut) / coinQty;
+  const breakEven   = mode === 'long'
+    ? entry + (feeIn + feeOut) / coinQty
+    : entry - (feeIn + feeOut) / coinQty;
+
+  // Liquidation price (simplified: 100% margin loss)
+  // For isolated margin: Liq = Entry × (1 ∓ 1/leverage) with fee buffer
+  const liqMove = (1 / leverage) * 0.9; // 90% of full leverage move
+  const liqPrice = mode === 'long'
+    ? entry * (1 - liqMove)
+    : entry * (1 + liqMove);
+
+  // Risk/Reward (if SL provided)
+  let rrText = '—';
+  if (sl && sl !== entry) {
+    const slDist = Math.abs(entry - sl);
+    const tpDist = Math.abs(exit - entry);
+    const rr = (tpDist / slDist);
+    rrText = '1 : ' + rr.toFixed(2);
+  }
+
+  // ── Render ─────────────────────────────────────────────────────────
+  const isProfit = netPnl >= 0;
+  const banner   = document.getElementById('result-banner');
+  banner.className       = 'result-banner ' + (isProfit ? 'profit' : 'loss');
+  banner.style.display   = 'block';
+  document.getElementById('r-banner-label').textContent  = isProfit ? 'NET PROFIT' : 'NET LOSS';
+  const amountEl = document.getElementById('r-banner-amount');
+  amountEl.textContent   = (isProfit ? '+' : '-') + '$' + Math.abs(netPnl).toFixed(2);
+  amountEl.className     = 'amount ' + (isProfit ? 'profit-text' : 'loss-text');
+
+  document.getElementById('r-roi').textContent        = (roi >= 0 ? '+' : '') + roi.toFixed(2) + '%';
+  document.getElementById('r-roi').style.color        = roi >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('r-pos-val').textContent    = '$' + positionValue.toFixed(2);
+  document.getElementById('r-total-fees').textContent = '-$' + totalFees.toFixed(4);
+
+  document.getElementById('r-gross').textContent    = (grossPnl >= 0 ? '+' : '') + fmt(grossPnl);
+  document.getElementById('r-gross').style.color    = grossPnl >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('r-fee-in').textContent   = '-$' + feeIn.toFixed(4);
+  document.getElementById('r-fee-out').textContent  = '-$' + feeOut.toFixed(4);
+  document.getElementById('r-breakeven').textContent = '$' + breakEven.toFixed(4);
+  document.getElementById('r-liq').textContent      = '$' + liqPrice.toFixed(2);
+  document.getElementById('r-rr').textContent       = rrText;
+  document.getElementById('results-grid').style.display = 'grid';
+
+  // Liquidation warning
+  const liqDist = Math.abs(exit - liqPrice);
+  const liqDistPct = (liqDist / exit * 100).toFixed(1);
+  const liqEl = document.getElementById('liq-warning');
+  if (leverage >= 10) {
+    liqEl.style.display = 'block';
+    document.getElementById('liq-dist').textContent = '$' + liqDist.toFixed(2) + ' (' + liqDistPct + '%)';
+    document.getElementById('liq-move').textContent = (100 / leverage * 0.9).toFixed(1) + '%';
+  } else {
+    liqEl.style.display = 'none';
+  }
+}
+
+// Wire up inputs
+document.querySelectorAll('input').forEach(el => {
+  el.addEventListener('input', calculate);
+  el.addEventListener('keydown', e => { if(e.key==='Enter') calculate(); });
+});
+calculate();
+</script>
+</body>
+</html>
