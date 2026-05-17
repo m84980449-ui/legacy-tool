@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Binance Fee Calculator — Spot & Futures 2026 (VIP + BNB Discount)</title>
+<meta name="description" content="Free Binance fee calculator for Spot and Futures trading. Includes all VIP levels, BNB 25% discount, maker/taker rates. Instantly see what you pay per trade."/>
+<link rel="canonical" href="https://nassr-nasr.github.io/crypto-tools/fee-calculator.html"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080C14;--card:#0F1520;--border:#1A2540;--accent:#00D4FF;--accent2:#7B2FFF;--text:#E2E8F0;--muted:#6B7A99;--green:#22c55e;--yellow:#f59e0b}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+nav{display:flex;align-items:center;gap:1rem;padding:1rem 2rem;border-bottom:1px solid var(--border)}
+nav a{color:var(--muted);text-decoration:none;font-size:.9rem}nav a:hover{color:var(--text)}
+nav .logo{font-weight:800;color:var(--text);margin-right:auto}
+.hero{padding:3rem 2rem 2rem;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(0,212,255,.06) 0%,transparent 60%)}
+h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;margin-bottom:.75rem;line-height:1.15}
+.grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto 2rem;line-height:1.7}
+.main{max-width:780px;margin:0 auto;padding:1.5rem 2rem}
+.calc{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:2rem}
+.calc h2{font-size:1.2rem;font-weight:700;margin-bottom:1.5rem}
+.mode-toggle{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.5rem}
+.mode-btn{flex:1;padding:.65rem;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;font-weight:600;transition:all .2s}
+.mode-btn.active{background:rgba(0,212,255,.12);color:var(--accent)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+@media(max-width:520px){.grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:.4rem}
+label{font-size:.85rem;color:var(--muted);font-weight:600}
+select,input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);padding:.75rem 1rem;border-radius:10px;font-size:.95rem;font-family:inherit;outline:none;transition:border-color .2s;-webkit-appearance:none}
+select:focus,input:focus{border-color:var(--accent)}
+.toggle-field{display:flex;align-items:center;gap:.75rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem;cursor:pointer}
+.toggle-field label{cursor:pointer;margin:0;color:var(--text);font-size:.95rem;font-weight:600}
+.toggle-field input[type=checkbox]{width:auto;accent-color:var(--accent)}
+.calc-btn{margin-top:1.5rem;width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:700;font-size:1rem;padding:1rem;border-radius:12px;border:none;cursor:pointer;transition:transform .2s,opacity .2s}
+.calc-btn:hover{transform:translateY(-1px);opacity:.9}
+.results{margin-top:1.5rem}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1rem}
+.result-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center}
+.result-label{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem}
+.result-value{font-size:1.4rem;font-weight:900}
+.result-value.accent{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.result-value.green{color:var(--green)}
+.result-value.yellow{color:var(--yellow)}
+.fee-table{width:100%;border-collapse:collapse;margin-top:1.5rem;font-size:.85rem}
+.fee-table th{background:rgba(0,212,255,.06);color:var(--muted);font-weight:700;padding:.75rem 1rem;text-align:left;text-transform:uppercase;font-size:.75rem;letter-spacing:.05em}
+.fee-table td{padding:.75rem 1rem;border-bottom:1px solid var(--border)}
+.fee-table tr:last-child td{border-bottom:none}
+.fee-table tr:hover td{background:rgba(255,255,255,.02)}
+.highlight-row td{color:var(--accent);font-weight:700}
+.explain{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:2rem}
+.explain h2{font-size:1.2rem;font-weight:700;margin-bottom:1rem}
+.explain p,.explain li{color:var(--muted);font-size:.95rem;line-height:1.8}
+.explain ul{padding-left:1.5rem;margin:.75rem 0}
+.cta-inline{background:linear-gradient(135deg,rgba(0,212,255,.07),rgba(123,47,255,.07));border:1px solid rgba(0,212,255,.15);border-radius:20px;padding:2rem;text-align:center;margin-bottom:2rem}
+.cta-inline h3{font-weight:800;font-size:1.25rem;margin-bottom:.5rem}
+.cta-inline p{color:var(--muted);margin-bottom:1.25rem;font-size:.95rem}
+.btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:700;padding:.8rem 1.8rem;border-radius:12px;text-decoration:none;font-size:.95rem;box-shadow:0 0 25px rgba(0,212,255,.2);transition:transform .2s}
+.btn:hover{transform:translateY(-2px)}
+footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<nav>
+  <span class="logo">💸 CryptoTools</span>
+  <a href="index.html">All Tools</a>
+  <a href="position-calculator.html">Position Calc</a>
+  <a href="pnl-calculator.html">P&L Calc</a>
+</nav>
+
+<section class="hero">
+  <h1>Binance <span class="grad">Fee Calculator</span></h1>
+  <p class="sub">See exactly what you pay in fees on Binance Spot and Futures. Includes VIP levels, BNB discount, and daily fee impact analysis.</p>
+</section>
+
+<div class="main">
+  <div class="calc">
+    <h2>💸 Fee Calculator</h2>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn-spot" onclick="setMarket('spot')">SPOT</button>
+      <button class="mode-btn" id="btn-futures" onclick="setMarket('futures')">FUTURES</button>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label for="trade-size">Trade Size</label>
+        <div style="position:relative">
+          <input type="number" id="trade-size" value="1000" placeholder="1000" style="padding-right:3.5rem"/>
+          <span style="position:absolute;right:.8rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;font-weight:600">USDT</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="vip-level">VIP Level</label>
+        <select id="vip-level" onchange="updateRates()">
+          <option value="0">Regular (VIP 0)</option>
+          <option value="1">VIP 1 (≥50 BTC vol)</option>
+          <option value="2">VIP 2 (≥200 BTC vol)</option>
+          <option value="3">VIP 3 (≥500 BTC vol)</option>
+          <option value="4">VIP 4 (≥1500 BTC vol)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="order-type">Order Type</label>
+        <select id="order-type">
+          <option value="taker">Taker (Market Order)</option>
+          <option value="maker">Maker (Limit Order)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>BNB Discount</label>
+        <div class="toggle-field" onclick="document.getElementById('bnb').click()">
+          <input type="checkbox" id="bnb" checked/>
+          <label for="bnb">Pay fees in BNB (25% off)</label>
+        </div>
+      </div>
+    </div>
+    <div class="field" style="margin-top:1rem">
+      <label for="trades-day">Trades per Day (for daily analysis)</label>
+      <input type="number" id="trades-day" value="5" min="1" placeholder="5"/>
+    </div>
+    <button class="calc-btn" onclick="calculate()" id="calc-fee-btn">Calculate Fees →</button>
+
+    <div class="results" id="results" style="display:none">
+      <div class="result-grid">
+        <div class="result-card">
+          <div class="result-label">Fee Rate</div>
+          <div class="result-value accent" id="r-rate">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Fee Per Trade</div>
+          <div class="result-value yellow" id="r-fee">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Round Trip</div>
+          <div class="result-value yellow" id="r-roundtrip">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Daily Cost</div>
+          <div class="result-value" id="r-daily">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Monthly Cost</div>
+          <div class="result-value" id="r-monthly">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">BNB Saving</div>
+          <div class="result-value green" id="r-saving">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fee reference table -->
+  <div class="explain">
+    <h2>Binance Spot Fee Schedule (2026)</h2>
+    <table class="fee-table" id="fee-table">
+      <thead>
+        <tr><th>Level</th><th>30-Day Volume</th><th>Maker</th><th>Taker</th><th>Maker (BNB)</th><th>Taker (BNB)</th></tr>
+      </thead>
+      <tbody id="fee-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="cta-inline">
+    <h3>Reduce fees by trading on <span class="grad">Binance</span></h3>
+    <p>Hold BNB and get 25% off all fees. New accounts get a welcome bonus on signup. Zero fees on selected BTC pairs.</p>
+    <a href="https://www.binance.com/activity/referral-entry/CPA?ref=897067319&utm_source=fee_calc" class="btn" id="cta-binance-fee">
+      🚀 Open Binance — Lowest Fees
+    </a>
+  </div>
+
+  <div class="explain">
+    <h2>How Binance Fees Work</h2>
+    <ul>
+      <li><strong>Maker</strong>: You place a limit order that sits in the order book. Lower fee because you add liquidity.</li>
+      <li><strong>Taker</strong>: You execute a market order that fills immediately. Slightly higher fee.</li>
+      <li><strong>BNB Discount</strong>: Enable "Use BNB for fees" in your account settings to get 25% off automatically.</li>
+      <li><strong>VIP Levels</strong>: Determined by your 30-day trading volume in BTC equivalent. Updates daily.</li>
+    </ul>
+    <p style="margin-top:.75rem"><strong>Pro tip:</strong> Even at VIP 0, using BNB lowers your taker fee from 0.10% to 0.075%. On $10,000/month trading volume, that's $25 saved every month.</p>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 CryptoTools — Fee data sourced from public Binance documentation. Always verify on binance.com.</p>
+  <p style="margin-top:.5rem"><a href="index.html" style="color:var(--muted)">← All Calculators</a></p>
+</footer>
+
+<script>
+let market = 'spot';
+
+// Binance fee schedule (spot and futures, 2026)
+const FEES = {
+  spot: [
+    {level:'Regular', vol:'< 50 BTC',    maker:.001,  taker:.001},
+    {level:'VIP 1',   vol:'≥ 50 BTC',    maker:.0009, taker:.001},
+    {level:'VIP 2',   vol:'≥ 200 BTC',   maker:.0008, taker:.0009},
+    {level:'VIP 3',   vol:'≥ 500 BTC',   maker:.0007, taker:.0008},
+    {level:'VIP 4',   vol:'≥ 1500 BTC',  maker:.0006, taker:.0007},
+  ],
+  futures: [
+    {level:'Regular', vol:'< 150 BTC',   maker:.0002, taker:.0005},
+    {level:'VIP 1',   vol:'≥ 150 BTC',   maker:.00016,taker:.0004},
+    {level:'VIP 2',   vol:'≥ 600 BTC',   maker:.00014,taker:.00035},
+    {level:'VIP 3',   vol:'≥ 1500 BTC',  maker:.00012,taker:.0003},
+    {level:'VIP 4',   vol:'≥ 4000 BTC',  maker:.0001, taker:.00025},
+  ]
+};
+
+function setMarket(m) {
+  market = m;
+  document.getElementById('btn-spot').className    = 'mode-btn' + (m==='spot' ? ' active' : '');
+  document.getElementById('btn-futures').className = 'mode-btn' + (m==='futures' ? ' active' : '');
+  buildTable(m);
+  calculate();
+}
+
+function buildTable(m) {
+  const data = FEES[m];
+  const vip  = parseInt(document.getElementById('vip-level').value) || 0;
+  const tbody = document.getElementById('fee-tbody');
+  tbody.innerHTML = data.map((r,i) =>
+    `<tr class="${i===vip?'highlight-row':''}">
+      <td>${r.level}</td><td>${r.vol}</td>
+      <td>${(r.maker*100).toFixed(3)}%</td><td>${(r.taker*100).toFixed(3)}%</td>
+      <td>${(r.maker*.75*100).toFixed(3)}%</td><td>${(r.taker*.75*100).toFixed(3)}%</td>
+    </tr>`
+  ).join('');
+}
+
+function updateRates() { buildTable(market); calculate(); }
+
+function calculate() {
+  const size      = parseFloat(document.getElementById('trade-size').value) || 0;
+  const vip       = parseInt(document.getElementById('vip-level').value) || 0;
+  const orderType = document.getElementById('order-type').value;
+  const bnb       = document.getElementById('bnb').checked;
+  const tradesDay = parseInt(document.getElementById('trades-day').value) || 1;
+
+  const schedule = FEES[market][vip];
+  let rate = orderType === 'maker' ? schedule.maker : schedule.taker;
+  const rateWithoutBNB = rate;
+  if (bnb) rate *= 0.75;
+
+  const fee       = size * rate;
+  const roundtrip = fee * 2;
+  const daily     = roundtrip * tradesDay;
+  const monthly   = daily * 30;
+  const saving    = size * rateWithoutBNB * 0.25 * 2 * tradesDay * 30;
+
+  document.getElementById('r-rate').textContent      = (rate*100).toFixed(4) + '%';
+  document.getElementById('r-fee').textContent       = '$' + fee.toFixed(4);
+  document.getElementById('r-roundtrip').textContent = '$' + roundtrip.toFixed(4);
+  document.getElementById('r-daily').textContent     = '$' + daily.toFixed(2);
+  document.getElementById('r-monthly').textContent   = '$' + monthly.toFixed(2);
+  document.getElementById('r-saving').textContent    = bnb ? '+$' + saving.toFixed(2) + '/mo' : 'Enable BNB';
+
+  document.getElementById('results').style.display = '';
+}
+
+// Init
+buildTable('spot');
+calculate();
+document.querySelectorAll('select,input').forEach(el => el.addEventListener('change', calculate));
+</script>
+</body>
+</html>
